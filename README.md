@@ -23,4 +23,6 @@ The all project was coded under PEP-8 (https://peps.python.org/pep-0008/) and fl
 
 ## Screenshot
 
+![alt text](https://github.com/HippolyteGuigon/Velib-Forecasting/blob/main/ressources/velib.jpg)
+
 ## How to use ?
