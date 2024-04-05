@@ -1,5 +1,6 @@
 #All these files should be excluded 
 *.txt 
+*.ipynb  
 
 #Except these files 
 
