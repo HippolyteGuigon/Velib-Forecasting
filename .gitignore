@@ -1,8 +1,8 @@
-#All these files should be excluded 
-*.txt 
-*.ipynb  
+#All these files should be excluded
+*.txt
+*.ipynb
 
-#Except these files 
+#Except these files
 
 !requirements.txt
 

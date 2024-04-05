@@ -17,7 +17,7 @@ The all project was coded under PEP-8 (https://peps.python.org/pep-0008/) and fl
 
 * This project uses a specific conda environment, to get it, run the following command: ```conda env create -f velib_forecasting_conda_environment.yml```
 
-* To install all necessary libraries, run the following code: 
+* To install all necessary libraries, run the following code:
 
 * This project has its own package that is used. To get it, run the following command: ```python install setup.py```
 
