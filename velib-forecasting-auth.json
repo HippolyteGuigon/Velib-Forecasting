@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "velib-forecasting",
+  "private_key_id": "01817bafb8d07c074b0db78aa79314dda5f43e13",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCO+5fEpIxLLAg3\neQlLgoeg5dJcXZGwDdMGjPlDaeOelnoIJPBV1P6ABU7QuJxyd8hkUe7sExhgdbwX\nfHZsmf3TMX2rCwOUUHQi/gvLQijFC8XCjGMxj/vU1FT+yLaq7x9Luedwi3LrE6Vy\nZveSC/K1rafiw/yvGoXniahNjV97QbC4s+CFOuhyPqQtXO6PTKW6Tkvl16H/GJ3a\nXyeHjaLZBYLR9mU/I0msZl9YA6YrwOVyy7kRE++nNTvnOyyp7bVbf8Mu5XpSdPYg\nT8IsQbzkr0J0bgO6wr0Bm4NVGimMmbaZdg5z6kvzM69zEbQY14eU8pgTMZppBmJd\n213GAoarAgMBAAECggEAD2uyux+/Ym4dzBR5kajCxZzJGsgb/ypb25AsY/5mxlhW\np0vglck9J4PVs8IYBr/EyjkMn8O8HyR42ZRFVhd883WaJu6EVM8hL2hJz61Te1Oh\nNlxwvaGDQ2QhGezTcqJhNDLDyMoUEKa+SGqILJAC/bV8bq283LUWGFoq34Ot9rt+\nJn0E9y4AeuX7rtWTWj8aHtpXKBeIyEpbnxLSeWZ8ZDM6IJCOCkeyrgNSe4ZK3i7x\n2RyHkEUczaN++z5pqu+5n6wMwAFgGGj0ZBULWaBfItGbuoRWfsEZk8KUN3M+GtD8\nT06pBw4V4cHxVFswYubyhxEgukYpxo6nxqKPJs+TGQKBgQDJ7wp0DGNkqh1zACAT\nLQHMlvojB+ZDmthPdo7QRFGMa0E3umuy6bKG5CG2RsLpagw3bNI00lKqzVeD7f2H\nYn834kovhvK+svTNNAckWdUx2vDaiWYJcNqkwpNiyLen38TOqFfS3dZXr3vDM8qM\nILJLwPqwv87LfI4hmzBbqiSf0wKBgQC1Q+4aJUxqwI+vu0c4iGuWtV0zr84rLbsb\n50oz/VcN0GXs949iFccF9FDuxRS6vD5YlNHZyfkuleWXhNsS0m5Ojktb8ATWr6uk\nQKCZqzJ2gdkp7/FDF0481QtHbZmwmCdOGrLCeZ/BM6lrjRx/8oT6/vdo99pmlnJc\nhIEowL6OyQKBgFulB/p48NbruafKg8QQJgPi9SzW1fMSoF8X8GKmztfKiXOwQFaX\nZzV+7ana3XSvc1HoKlJcrbXksXYnmWtLEW+cXIzLUvmnICDNHvypZG9W7P5RYySf\nuisSP2+Spn8iuCAOGKWTlkZ/VszVgXQtFp34vA1hT4ncQmkQFFdVlX+PAoGAVxls\nGO4hOQ6MPJHN2DFdGU7OmR55/696wB60PiUWppGj2GjgYe468vaBySm0G0KG5sOj\nznXJoYPvjY4OQo4Q6Phg561+dbZ10Hgpc42asu0T753XHTjepEZupATbG8sQ3+ve\nR6pvhEORvhdRQX3EPmMzeSHXtQHHtAMLmQx8xFkCgYAUfvaKrAdnQN9YsSs32E3Z\n4WqCLZLO0Sz9VCIaxjlnHZKGGMGqOpD1weSfU+hOrE4h214oIcA+J1GxcI/eAQo+\nDI0XouxbNkQ24C5ZAZO9Pp8+F8MtsLMUZ0FWQfp/s3wSQufi59biXJ5c20kmVPDb\nvgZ489t7Pb8mQFg9MYc9pQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "velib-forecasting@velib-forecasting.iam.gserviceaccount.com",
+  "client_id": "104216818428504684408",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/velib-forecasting%40velib-forecasting.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
