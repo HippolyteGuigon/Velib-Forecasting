@@ -1,0 +1,1 @@
+VELIB_ENDPOINT: https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel%40parisdata&rows=3000&facet=overflowactivation&facet=creditcard&facet= kioskstate&facet=station_state
