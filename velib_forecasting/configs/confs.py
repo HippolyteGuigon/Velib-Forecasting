@@ -1,8 +1,9 @@
 import yaml
 import os
+from pathlib import Path
 
 
-def load_conf(path: str, include=False) -> yaml:
+def load_conf(include=False) -> yaml:
     """
     The goal of this function is to load the
     params
@@ -13,6 +14,14 @@ def load_conf(path: str, include=False) -> yaml:
     Returns:
         -file: yaml file The configuration file loaded
     """
+
+    path = Path(os.getcwd())
+
+    path = os.path.join(path.parent.parent.parent, "configs/main.yml")
+
+    if not os.path.exists(path):
+        path = "/opt/airflow/configs/main.yml"
+
     if include:
         with open(path, "r") as f:
             file = yaml.load(f, Loader)

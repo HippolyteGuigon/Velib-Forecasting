@@ -3,7 +3,7 @@ import pandas as pd
 
 from velib_forecasting.configs.confs import load_conf, clean_params
 
-main_params = load_conf("configs/main.yml", include=True)
+main_params = load_conf(include=True)
 main_params = clean_params(main_params)
 
 VELIB_ENDPOINT = main_params["VELIB_ENDPOINT"]
