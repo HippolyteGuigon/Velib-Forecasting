@@ -9,10 +9,9 @@ from velib_forecasting.ETL.transform.transform_velib import transform_velib
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": datetime(2024, 4, 8),
     "email_on_failure": False,
     "email_on_retry": False,
-    "retries": 1,
+    "retries": 0,
     "retry_delay": timedelta(minutes=5),
 }
 
@@ -20,7 +19,9 @@ dag = DAG(
     "velib_dag_recuperation",
     default_args=default_args,
     description="DAG pour aller récupérer les données velib",
-    schedule_interval=timedelta(hours=1),
+    schedule_interval=timedelta(minutes=10),
+    start_date=datetime(2024, 4, 11),
+    catchup=False,
 )
 
 
