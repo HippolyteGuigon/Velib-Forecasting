@@ -25,7 +25,7 @@ dag = DAG(
 )
 
 
-def velib_station_info_pipelin() -> None:
+def velib_station_info_pipeline() -> None:
     """
     The goal of this function is to
     use Airflow to put the different
@@ -44,6 +44,6 @@ def velib_station_info_pipelin() -> None:
 
 velib_task = PythonOperator(
     task_id="recuperer_et_inserer_donnees",
-    python_callable=velib_station_info_pipelin,
+    python_callable=velib_station_info_pipeline,
     dag=dag,
 )
