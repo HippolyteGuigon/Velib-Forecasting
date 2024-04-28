@@ -11,6 +11,7 @@ python = "^3.9"
 pandas-gbq = "^0.22.0"
 google-auth = "^2.29.0"
 pandera = "^0.18.3"
+packaging = "^20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"
