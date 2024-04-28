@@ -16,10 +16,6 @@ jobs:
           pkg-manager: poetry  # Installer les dépendances définies dans pyproject.toml
 
       - run:
-          name: Installer pytest
-          command: poetry add pytest  # Installer explicitement pytest pour s'assurer de sa présence
-
-      - run:
           name: Exécuter les tests avec pytest
           command: poetry run pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
 
