@@ -1,6 +1,7 @@
 #All these files should be excluded
 *.txt
 *.ipynb
+.vscode/*
 
 #Except these files
 
