@@ -22,20 +22,18 @@ COPY .. /opt/airflow
 RUN python setup.py install
 RUN pip install --upgrade typing_extensions typeguard
 
-# Copier le script d'initialisation et le rendre exécutable
-COPY airflow-docker/init_script.sh /opt/airflow/
-RUN chmod +x /opt/airflow/init_script.sh
+# Installer le pilote MySQL pour Python
+RUN pip install pendulum==2.1.2
+RUN pip install mysql-connector-python
 
-# Définir les variables d'environnement nécessaires pour Airflow
+# Définir les variables d'environnement nécessaires pour Airflow et MySQL
 ENV AIRFLOW_HOME=/opt/airflow/velib_forecasting/ETL/
 ENV AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/velib_forecasting/ETL/dags/
-ENV AIRFLOW__CORE__EXECUTOR=SequentialExecutor
-ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+ENV AIRFLOW__CORE__EXECUTOR=LocalExecutor
+ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN=mysql+mysqlconnector://airflow_user:Mogalys900@mysql-service:3306/airflow_db
 ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
-ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
-
-RUN airflow db init
-# Exposer le port par défaut du serveur web Airflow
+ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=mysql+mysqlconnector://airflow_user:Mogalys900@mysql-service:3306/airflow_db
+ENV AIRFLOW__SCHEDULER__SCHEDULER_RUNS=True
 
 RUN airflow users create \
     --username admin \
@@ -45,8 +43,8 @@ RUN airflow users create \
     --email hippodouche@me.com \
     --password Mogalys900
 
-
+# Exposer le port par défaut du serveur web Airflow
 EXPOSE 8080
 
-# Étape finale: Définir la commande par défaut pour exécuter le script d'initialisation
-CMD ["/opt/airflow/init_script.sh"]
+# Étape finale: Définir la commande par défaut pour exécuter le serveur web Airflow
+CMD ["airflow", "webserver"]

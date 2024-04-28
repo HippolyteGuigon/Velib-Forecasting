@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+  template:
+    metadata:
+      labels:
+        app: airflow
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox
+        command: ["sh", "-c", "until nc -z mysql-service 3306; do sleep 3; done"]
+      - name: init-airflow-db
+        image: gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest
+        command: ["airflow", "db", "init"]
+      - name: create-airflow-user
+        image: gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest
+        command:
+        - "airflow"
+        - "users"
+        - "create"
+        - "--username"
+        - "admin"
+        - "--firstname"
+        - "HIPPOLYTE"
+        - "--lastname"
+        - "GUIGON"
+        - "--role"
+        - "Admin"
+        - "--email"
+        - "hippodouche@me.com"
+        - "--password"
+        - "Mogalys900"
+      containers:
+      - name: airflow-webserver
+        image: gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest
+        command: ["airflow", "webserver"]
+        ports:
+        - containerPort: 8080
+      - name: airflow-scheduler
+        image: gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest
+        command: ["airflow", "scheduler"]
+        env:
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          value: mysql+mysqlconnector://airflow_user:Mogalys900@mysql-service:3306/airflow_db

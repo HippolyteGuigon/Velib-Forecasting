@@ -1,0 +1,14 @@
+# airflow-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-service
+spec:
+  selector:
+    app: airflow
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080  # Port exposé par le serveur web Airflow
+  type: LoadBalancer  # Type de service utilisé pour exposer le serveur web Airflow à l'extérieur du cluster
