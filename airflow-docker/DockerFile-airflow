@@ -35,14 +35,6 @@ ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=mysql+mysqlconnector://airflow_user:Mogalys900@mysql-service:3306/airflow_db
 ENV AIRFLOW__SCHEDULER__SCHEDULER_RUNS=True
 
-RUN airflow users create \
-    --username admin \
-    --firstname HIPPOLYTE \
-    --lastname GUIGON \
-    --role Admin \
-    --email hippodouche@me.com \
-    --password Mogalys900
-
 # Exposer le port par défaut du serveur web Airflow
 EXPOSE 8080
 
