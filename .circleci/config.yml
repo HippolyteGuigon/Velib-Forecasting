@@ -42,10 +42,6 @@ jobs:
           name: Obtenir le Build ID le Plus Récent
           command: |
             BUILD_ID=$(gcloud builds list --sort-by='~createTime' --limit=1 --format='value(id)')  # Obtenir le build_id le plus récent
-            if [ -z "$BUILD_ID" ]; alors
-              echo "Erreur: Impossible de trouver le BUILD_ID"
-              exit 1  # Arrêter si le BUILD_ID est vide
-            fi
             echo "BUILD_ID: $BUILD_ID"
             echo $BUILD_ID > build_id.txt  # Enregistrer le BUILD_ID
 
