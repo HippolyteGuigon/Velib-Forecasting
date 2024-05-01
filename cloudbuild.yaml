@@ -4,7 +4,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'cd airflow-deploy && gcloud builds submit --config=cloudbuild.yaml'
+      - 'cd airflow-deploy'
 
   # Étape pour builder l'image Docker à partir du Dockerfile spécifié
   - name: 'gcr.io/cloud-builders/docker'
