@@ -31,15 +31,14 @@ class Test(unittest.TestCase):
         query = f"SELECT COUNT(*) AS total_rows FROM `{table_id}`"
         query_job = client.query(query)
 
-        total_rows = list(query_job.result())[0]
+        total_rows = list(query_job.result())[0]["total_rows"]
 
         velib_station_info_pipeline()
 
         query_check = f"SELECT COUNT(*) AS total_rows FROM `{table_id}`"
         query_job_check = client.query(query_check)
 
-        total_rows_check = list(query_job_check.result())[0]
-        print("total_rows_check", total_rows_check, "total_rows", total_rows)
+        total_rows_check = list(query_job_check.result())[0]["total_rows"]
 
         self.assertGreater(total_rows_check, total_rows)
 
