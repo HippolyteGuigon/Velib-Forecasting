@@ -1,28 +1,37 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'airflow_image','-f', 'airflow-deploy/DockerFile-airflow','.' ]
-  id: 'Build Docker Image'
+  # Change le répertoire de travail pour toutes les étapes suivantes
+  - name: 'google/cloud-sdk:latest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'cd airflow-deploy && gcloud builds submit --config=cloudbuild.yaml'
 
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', 'tag', 'airflow_image','gcr.io/velib-forecasting/airflow_velib_forecasting_image']
-  id: 'Tag Docker Image'
+  # Étape pour builder l'image Docker à partir du Dockerfile spécifié
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'airflow_image', '-f', 'DockerFile-airflow', '.']
+    id: 'Build Docker Image'
 
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest' ]
-  id: 'Push Docker Image'
+  # Étape pour taguer l'image Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'airflow_image', 'gcr.io/velib-forecasting/airflow_velib_forecasting_image']
+    id: 'Tag Docker Image'
 
-- name: 'google/cloud-sdk:latest'
-  entrypoint: 'sh'
-  args:
-  - -xe
-  - -c
-  - |
-    gcloud deploy apply --file airflow-deploy/mysql-deployment.yaml --region=europe-west1
-    gcloud deploy apply --file airflow-deploy/mysql-service.yaml --region=europe-west1
-    gcloud deploy apply --file airflow-deploy/airflow-deployment.yaml --region=europe-west1
-    gcloud deploy apply --file airflow-deploy/airflow-service.yaml --region=europe-west1
+  # Étape pour pousser l'image Docker vers Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest']
+    id: 'Push Docker Image'
 
-
+  # Étape pour appliquer des configurations avec Google Cloud SDK
+  - name: 'google/cloud-sdk:latest'
+    entrypoint: 'sh'
+    args:
+      - -xe
+      - -c
+      - |
+        gcloud deploy apply --file mysql-deployment.yaml --region=europe-west1
+        gcloud deploy apply --file mysql-service.yaml --region=europe-west1
+        gcloud deploy apply --file airflow-deployment.yaml --region=europe-west1
+        gcloud deploy apply --file airflow-service.yaml --region=europe-west1
 
 options:
   logging: CLOUD_LOGGING_ONLY
