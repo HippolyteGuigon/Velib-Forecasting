@@ -1,0 +1,28 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'airflow_image','-f', 'airflow-deploy/DockerFile-airflow','.' ]
+  id: 'Build Docker Image'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', 'tag', 'airflow_image','gcr.io/velib-forecasting/airflow_velib_forecasting_image']
+  id: 'Tag Docker Image'
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest' ]
+  id: 'Push Docker Image'
+
+- name: 'google/cloud-sdk:latest'
+  entrypoint: 'sh'
+  args:
+  - -xe
+  - -c
+  - |
+    gcloud deploy apply --file airflow-deploy/mysql-deployment.yaml --region=europe-west1
+    gcloud deploy apply --file airflow-deploy/mysql-service.yaml --region=europe-west1
+    gcloud deploy apply --file airflow-deploy/airflow-deployment.yaml --region=europe-west1
+    gcloud deploy apply --file airflow-deploy/airflow-service.yaml --region=europe-west1
+
+
+
+options:
+  logging: CLOUD_LOGGING_ONLY
