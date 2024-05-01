@@ -50,10 +50,10 @@ jobs:
           command: |
             BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID
             STATUS=""
-            while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; faites
+            while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; do
               STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')  # Obtenir le statut du build
               echo "Statut du Build: $STATUS"
-              sleep 10  # Pause avant de vérifier à nouveau
+              sleep 10;  # Pause avant de vérifier à nouveau
             done
             if [ "$STATUS" = "FAILURE" ]; then
               echo "Le Build a échoué"
