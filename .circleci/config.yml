@@ -14,7 +14,7 @@ jobs:
 
       - run:
           name: Exécuter les tests avec pytest
-          command: pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
+          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
 
       - store_test_results:
           path: junit.xml  # Stocker les résultats des tests
