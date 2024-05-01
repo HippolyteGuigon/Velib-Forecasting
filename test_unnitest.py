@@ -39,6 +39,7 @@ class Test(unittest.TestCase):
         query_job_check = client.query(query_check)
 
         total_rows_check = list(query_job_check.result())[0]
+        print("total_rows_check", total_rows_check, "total_rows", total_rows)
 
         self.assertGreater(total_rows_check, total_rows)
 
