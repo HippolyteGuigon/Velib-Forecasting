@@ -1,24 +1,18 @@
-# Étape 1: Choisir une image de base avec Python 3.9
 FROM python:3.9-slim-buster
 
-# Définir le répertoire de travail dans le conteneur
 WORKDIR /opt/airflow
 
-# Étape 2: Installer Airflow (ajustez à la version souhaitée)
 RUN pip install apache-airflow==2.3.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.0/constraints-3.9.txt"
 
-# Étape 6: Copier le reste des fichiers du projet
 COPY . /opt/airflow
 
 RUN pip install -r requirements.txt
 RUN python setup.py install
 RUN pip install --upgrade typing_extensions typeguard
 
-# Installer le pilote MySQL pour Python
 RUN pip install pendulum==2.1.2
 RUN pip install mysql-connector-python
 
-# Définir les variables d'environnement nécessaires pour Airflow et MySQL
 ENV AIRFLOW_HOME=/opt/airflow/velib_forecasting/ETL/
 ENV AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/velib_forecasting/ETL/dags/
 ENV AIRFLOW__CORE__EXECUTOR=LocalExecutor
@@ -27,8 +21,6 @@ ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=mysql+mysqlconnector://airflow_user:Mogalys900@mysql-service:3306/airflow_db
 ENV AIRFLOW__SCHEDULER__SCHEDULER_RUNS=True
 
-# Exposer le port par défaut du serveur web Airflow
 EXPOSE 8080
 
-# Étape finale: Définir la commande par défaut pour exécuter le serveur web Airflow
 CMD ["airflow", "webserver"]
