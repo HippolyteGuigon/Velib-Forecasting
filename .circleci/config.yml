@@ -24,7 +24,7 @@ jobs:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
-      GOOGLE_APPLICATION_CREDENTIALS: velib-forecasting-auth.json
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
     steps:
       - checkout  # Récupérer le code source
 
@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Déclencher le Build Cloud Build
-          command: gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8  --configuration=./cloudbuild.yaml # Déclencher le build via un trigger spécifique
+          command: gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8  --config-file=./cloudbuild.yaml # Déclencher le build via un trigger spécifique
           environment:
             CLOUDSDK_COMPUTE_REGION: europe-west1  # Spécifiez la région Cloud Build
 
