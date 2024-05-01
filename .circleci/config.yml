@@ -9,15 +9,12 @@ jobs:
       - checkout  # Récupérer le code source
 
       - run:
-          name: Nettoyer le cache Poetry
-          command: poetry cache clear --all pypi  # Nettoyer le cache Poetry
-
-      - python/install-packages:
-          pkg-manager: poetry  # Installer les dépendances définies dans pyproject.toml
+          name: Installer les dépendances avec pip
+          command: pip install -r requirements.txt  # Installer les dépendances avec pip
 
       - run:
           name: Exécuter les tests avec pytest
-          command: poetry run pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
+          command: pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
 
       - store_test_results:
           path: junit.xml  # Stocker les résultats des tests
