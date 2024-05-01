@@ -4,7 +4,7 @@ orbs:
 jobs:
   test-python:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.9  # Image de base avec Python 3.9
     steps:
       - checkout  # Récupérer le code source
 
@@ -24,7 +24,7 @@ jobs:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
-      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json  # Chemin vers la clé de service
     steps:
       - checkout  # Récupérer le code source
 
@@ -33,14 +33,20 @@ jobs:
           command: gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS  # Authentification
 
       - run:
-          name: Déclencher le Build Cloud Build
+          name: Déclencher le Trigger Cloud Build
           command: |
-            BUILD_ID=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')  # Obtenir l'ID du build
-            echo "Build ID: $BUILD_ID"
+            TRIGGER_RESULT=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')  # Lancer le trigger
+            if [ -z "$TRIGGER_RESULT" ]; then
+              echo "Erreur: Impossible de récupérer le BUILD_ID"
+              exit 1  # Quitter si le BUILD_ID est vide
+            fi
+            echo "BUILD_ID: $TRIGGER_RESULT"
+            echo $TRIGGER_RESULT > build_id.txt  # Enregistrer le BUILD_ID dans un fichier pour référence
 
       - run:
           name: Surveiller le Build
           command: |
+            BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID enregistré
             STATUS=""
             while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; do
               STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')  # Obtenir le statut du build
@@ -49,7 +55,7 @@ jobs:
             done
             if [ "$STATUS" = "FAILURE" ]; then
               echo "Build Failed"
-              exit 1  # Arrête le job si le build a échoué
+              exit 1  # Arrête le job si le build échoue
             fi
 
 workflows:
