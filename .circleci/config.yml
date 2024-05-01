@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  python: circleci/python@2  # Utilisation de l'orbe Python de CircleCI
+  python: circleci/python@2
 jobs:
   test-python:
     docker:
@@ -10,7 +10,7 @@ jobs:
 
       - run:
           name: Installer les dépendances avec pip
-          command: pip install -r requirements.txt  # Installer les dépendances avec pip
+          command: pip install -r requirements.txt  # Installer les dépendances
 
       - run:
           name: Exécuter les tests avec pytest
@@ -19,12 +19,12 @@ jobs:
       - store_test_results:
           path: junit.xml  # Stocker les résultats des tests unitaires
 
-  trigger-cloudbuild:
+  trigger-and-get-build-id:
     docker:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
-      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json  # Chemin vers la clé de service Google Cloud
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json  # Chemin vers la clé de service
     steps:
       - checkout  # Récupérer le code source
 
@@ -35,29 +35,38 @@ jobs:
       - run:
           name: Déclencher le Trigger Cloud Build
           command: |
-            TRIGGER_RESULT=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')
-            sleep 10
-            echo "BUILD_ID: $TRIGGER_RESULT"
-            echo $TRIGGER_RESULT > build_id.txt
+            gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8  # Déclenche le trigger
+            sleep 5  # Attendre 5 secondes pour permettre au build de démarrer
+
+      - run:
+          name: Obtenir le Build ID le Plus Récent
+          command: |
+            BUILD_ID=$(gcloud builds list --sort-by='~createTime' --limit=1 --format='value(id)')  # Obtenir le build_id le plus récent
+            if [ -z "$BUILD_ID" ]; alors
+              echo "Erreur: Impossible de trouver le BUILD_ID"
+              exit 1  # Arrêter si le BUILD_ID est vide
+            fi
+            echo "BUILD_ID: $BUILD_ID"
+            echo $BUILD_ID > build_id.txt  # Enregistrer le BUILD_ID
 
       - run:
           name: Surveiller le Build Cloud Build
           command: |
             BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID
             STATUS=""
-            while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; do
+            while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; faites
               STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')  # Obtenir le statut du build
-              echo "Build Status: $STATUS"
+              echo "Statut du Build: $STATUS"
               sleep 10  # Pause avant de vérifier à nouveau
             done
             if [ "$STATUS" = "FAILURE" ]; alors
-              echo "Build Failed"
-              exit 1  # Quitter si le build échoue
+              echo "Le Build a échoué"
+              exit 1  # Arrêter si le build échoue
             fi
 
 workflows:
   ci-cd:
     jobs:
       - test-python
-      - trigger-cloudbuild:
+      - trigger-and-get-build-id:
           requires: [test-python]  # Exécution après le succès des tests unitaires
