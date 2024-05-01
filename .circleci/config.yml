@@ -4,21 +4,34 @@ orbs:
 jobs:
   test-python:
     docker:
-      - image: cimg/python:3.9  # Image de base avec Python 3.9
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+
+      - run:
+          name: Installer les dépendances avec pip
+          command: pip install -r requirements.txt  # Installer les dépendances
+
+      - run:
+          name: Exécuter les tests avec pytest
+          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter les tests
+
+      - store_test_results:
+          path: junit.xml  # Stocker les résultats des tests
+
+  deploy:
+    docker:
+      - image: google/cloud-sdk:latest  # Image avec gcloud
     steps:
       - checkout  # Récupérer le code source
 
       - run:
-          name: Installer les dépendances avec pip
-          command: pip install -r requirements.txt  # Installer les dépendances avec pip
+          name: Exécuter Cloud Build pour le déploiement
+          command: gcloud builds submit --config=cloudbuild.yaml  # Exécuter le déploiement via Cloud Build
 
-      - run:
-          name: Exécuter les tests avec pytest
-          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter le fichier de test spécifique
-
-      - store_test_results:
-          path: junit.xml  # Stocker les résultats des tests
 workflows:
-  build-and-test:
+  ci-cd:
     jobs:
       - test-python
+      - deploy:
+          requires: [test-python]  # Ne s'exécute que si test-python réussit

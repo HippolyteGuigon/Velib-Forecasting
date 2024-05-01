@@ -7,15 +7,10 @@ WORKDIR /opt/airflow
 # Étape 2: Installer Airflow (ajustez à la version souhaitée)
 RUN pip install apache-airflow==2.3.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.0/constraints-3.9.txt"
 
-# Étape 4: Copier les fichiers de configuration de Poetry
-COPY requirements.txt /opt/airflow/
-
-# Étape 5: Installer les dépendances sans créer d'environnement virtuel
-RUN pip install -r requirements.txt
-
 # Étape 6: Copier le reste des fichiers du projet
 COPY .. /opt/airflow
 
+RUN pip install -r requirements.txt
 RUN python setup.py install
 RUN pip install --upgrade typing_extensions typeguard
 
