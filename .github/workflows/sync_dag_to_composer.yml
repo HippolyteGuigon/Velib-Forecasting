@@ -20,4 +20,4 @@ jobs:
         export_default_credentials: true
 
     - name: Sync DAGs to GCS
-      run: gsutil rsync -r velib_forecasting/ETL gs://airflow-bucket-storage/dags/
+      run: gsutil rsync -r velib_forecasting/ETL gs://${{ secrets.GCS_BUCKET }}/dags/
