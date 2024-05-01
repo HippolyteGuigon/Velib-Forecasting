@@ -22,6 +22,7 @@ def load_conf(include=False) -> yaml:
     if not os.path.exists(path):
         path = "/opt/airflow/configs/main.yml"
 
+    print("PATH_VERIFICATION", os.getcwd(), os.listdir())
     if include:
         with open(path, "r") as f:
             file = yaml.load(f, Loader)
@@ -29,6 +30,7 @@ def load_conf(include=False) -> yaml:
     else:
         with open(path, "r") as ymlfile:
             file = yaml.safe_load(ymlfile)
+
     return file
 
 
