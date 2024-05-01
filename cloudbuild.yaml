@@ -8,7 +8,7 @@ steps:
 
   # Étape pour builder l'image Docker à partir du Dockerfile spécifié
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'airflow_image', '-f', 'airflow-deploy/DockerFile-airflow', 'airflow-deploy']
+    args: ['build', '-t', 'airflow_image', '-f', 'airflow-deploy/DockerFile-airflow', '.']
     id: 'Build Docker Image'
 
   # Étape pour taguer l'image Docker
