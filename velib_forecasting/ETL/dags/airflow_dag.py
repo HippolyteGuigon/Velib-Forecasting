@@ -15,10 +15,19 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
-dag = DAG(
+dag_velib = DAG(
     "velib_dag_recuperation",
     default_args=default_args,
     description="DAG pour aller récupérer les données velib",
+    schedule_interval=timedelta(minutes=10),
+    start_date=datetime(2024, 4, 11),
+    catchup=False,
+)
+
+dag_meteo = DAG(
+    "meteo_dag_recuperation",
+    default_args=default_args,
+    description="DAG pour aller récupérer les données météo",
     schedule_interval=timedelta(minutes=10),
     start_date=datetime(2024, 4, 11),
     catchup=False,
@@ -42,8 +51,18 @@ def velib_station_info_pipeline() -> None:
     velib_dataframe_to_bigquery(df_velib)
 
 
+def meteo_info_pipeline() -> None:
+    pass
+
+
 velib_task = PythonOperator(
     task_id="recuperer_et_inserer_donnees",
     python_callable=velib_station_info_pipeline,
-    dag=dag,
+    dag=dag_velib,
+)
+
+meteo_task = PythonOperator(
+    task_id="recuperer_et_inserer_donnees",
+    python_callable=meteo_info_pipeline,
+    dag=dag_meteo,
 )
