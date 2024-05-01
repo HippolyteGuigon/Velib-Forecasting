@@ -1,10 +1,10 @@
 version: 2.1
 orbs:
-  python: circleci/python@2  # Utilisation de l'orbe Python de CircleCI
+  python: circleci/python@2
 jobs:
   test-python:
     docker:
-      - image: cimg/python:3.9  # Utilise Python 3.9 comme base d'image
+      - image: cimg/python:3.9
     steps:
       - checkout  # Récupérer le code source
 
@@ -14,26 +14,28 @@ jobs:
 
       - run:
           name: Exécuter les tests avec pytest
-          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter les tests avec pytest
+          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter les tests unitaires avec pytest
 
       - store_test_results:
-          path: junit.xml  # Stocker les résultats des tests unitaires
+          path: junit.xml  # Stocker les résultats des tests
 
-  deploy:
+  trigger-cloudbuild:
     docker:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
-      CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définit le projet Google Cloud
+      CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
     steps:
       - checkout  # Récupérer le code source
 
       - run:
-          name: Exécuter Cloud Build pour le déploiement
-          command: gcloud builds submit --config=cloudbuild.yaml  # Exécuter Cloud Build avec le fichier de configuration
+          name: Déclencher le Build Cloud Build
+          command: gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8  # Déclencher le build via un trigger spécifique
+          environment:
+            CLOUDSDK_COMPUTE_REGION: europe-west1  # Spécifiez la région Cloud Build
 
 workflows:
   ci-cd:
     jobs:
       - test-python
-      - deploy:
-          requires: [test-python]  # Ne s'exécute que si le test-python réussit
+      - trigger-cloudbuild:
+          requires: [test-python]  # Exécution après le succès des tests
