@@ -24,8 +24,13 @@ jobs:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
+      GOOGLE_APPLICATION_CREDENTIALS: velib-forecasting-auth.json
     steps:
       - checkout  # Récupérer le code source
+
+      - run:
+          name: Authentification Google Cloud
+          command: gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS  # Authentification
 
       - run:
           name: Déclencher le Build Cloud Build
