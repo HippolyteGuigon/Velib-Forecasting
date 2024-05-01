@@ -55,7 +55,7 @@ jobs:
               echo "Statut du Build: $STATUS"
               sleep 10  # Pause avant de vérifier à nouveau
             done
-            if [ "$STATUS" = "FAILURE" ]; alors
+            if [ "$STATUS" = "FAILURE" ]; then
               echo "Le Build a échoué"
               exit 1  # Arrêter si le build échoue
             fi
