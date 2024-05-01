@@ -8,7 +8,7 @@ WORKDIR /opt/airflow
 RUN pip install apache-airflow==2.3.0 --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.0/constraints-3.9.txt"
 
 # Étape 6: Copier le reste des fichiers du projet
-COPY .. /opt/airflow
+COPY . /opt/airflow
 
 RUN pip install -r requirements.txt
 RUN python setup.py install
