@@ -8,7 +8,7 @@ steps:
 
   # Étape pour builder l'image Docker à partir du Dockerfile spécifié
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'airflow_image', '-f', 'DockerFile-airflow', '.']
+    args: ['build', '-t', 'airflow_image', '-f', 'airflow-deploy/DockerFile-airflow', 'airflow-deploy']
     id: 'Build Docker Image'
 
   # Étape pour taguer l'image Docker
@@ -28,6 +28,7 @@ steps:
       - -xe
       - -c
       - |
+        cd airflow-deploy
         gcloud deploy apply --file mysql-deployment.yaml --region=europe-west1
         gcloud deploy apply --file mysql-service.yaml --region=europe-west1
         gcloud deploy apply --file airflow-deployment.yaml --region=europe-west1
