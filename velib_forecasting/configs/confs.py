@@ -19,10 +19,12 @@ def load_conf(include=False) -> yaml:
 
     path = os.path.join(path.parent.parent.parent, "configs/main.yml")
 
+    if os.getcwd() == "/home/circleci/project":
+        path = os.path.join(os.getcwd(), "configs/main.yml")
+
     if not os.path.exists(path):
         path = "/opt/airflow/configs/main.yml"
 
-    print("PATH_VERIFICATION", os.getcwd(), os.listdir())
     if include:
         with open(path, "r") as f:
             file = yaml.load(f, Loader)
