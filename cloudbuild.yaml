@@ -29,10 +29,10 @@ steps:
       - -c
       - |
         cd airflow-deploy
-        gcloud deploy apply --file mysql-deployment.yaml --region=europe-west1
-        gcloud deploy apply --file mysql-service.yaml --region=europe-west1
-        gcloud deploy apply --file airflow-deployment.yaml --region=europe-west1
-        gcloud deploy apply --file airflow-service.yaml --region=europe-west1
+        kubectl apply -f mysql-deployment.yaml
+        kubectl apply -f mysql-service.yaml
+        kubectl apply -f airflow-deployment.yaml
+        kubectl apply -f airflow-service.yaml
 
 options:
   logging: CLOUD_LOGGING_ONLY
