@@ -21,12 +21,6 @@ steps:
     args: ['push', 'gcr.io/velib-forecasting/airflow_velib_forecasting_image:latest']
     id: 'Push Docker Image'
 
-  - name: 'google/cloud-sdk:latest'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - 'gcloud container clusters get-credentials airflow-cluster --zone europe-west1-b --project velib-forecasting'
-
   # Étape pour appliquer des configurations avec Google Cloud SDK
   - name: 'google/cloud-sdk:latest'
     entrypoint: 'sh'
