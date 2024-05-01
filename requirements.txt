@@ -1,4 +1,4 @@
-airflow==0.6
+apache-airflow==2.9.0
 pandas==2.2.2
 pandas_gbq==0.22.0
 pandera==0.18.3
