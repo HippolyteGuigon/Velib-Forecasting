@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  python: circleci/python@2
+  python: circleci/python@2  # Utilisation de l'orbe Python de CircleCI
 jobs:
   test-python:
     docker:
@@ -10,21 +10,21 @@ jobs:
 
       - run:
           name: Installer les dépendances avec pip
-          command: pip install -r requirements.txt  # Installer les dépendances définies dans requirements.txt
+          command: pip install -r requirements.txt  # Installer les dépendances avec pip
 
       - run:
           name: Exécuter les tests avec pytest
-          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter les tests unitaires avec pytest
+          command: python -m pytest test_unnitest.py --junitxml=junit.xml  # Exécuter les tests unitaires
 
       - store_test_results:
-          path: junit.xml  # Stocker les résultats des tests
+          path: junit.xml  # Stocker les résultats des tests unitaires
 
   trigger-cloudbuild:
     docker:
       - image: google/cloud-sdk:latest  # Image avec gcloud
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting  # Définir le projet Google Cloud
-      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json  # Chemin vers la clé de service
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json  # Chemin vers la clé de service Google Cloud
     steps:
       - checkout  # Récupérer le code source
 
@@ -36,26 +36,27 @@ jobs:
           name: Déclencher le Trigger Cloud Build
           command: |
             TRIGGER_RESULT=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')  # Lancer le trigger
-            if [ -z "$TRIGGER_RESULT" ]; then
+            sleep 10  # Attendre 10 secondes
+            if [ -z "$TRIGGER_RESULT" ]; alors
               echo "Erreur: Impossible de récupérer le BUILD_ID"
-              exit 1  # Quitter si le BUILD_ID est vide
+              exit 1  # Arrête si le BUILD_ID est vide
             fi
             echo "BUILD_ID: $TRIGGER_RESULT"
-            echo $TRIGGER_RESULT > build_id.txt  # Enregistrer le BUILD_ID dans un fichier pour référence
+            echo $TRIGGER_RESULT > build_id.txt  # Enregistrer le BUILD_ID pour référence ultérieure
 
       - run:
-          name: Surveiller le Build
+          name: Surveiller le Build Cloud Build
           command: |
-            BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID enregistré
+            BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID
             STATUS=""
             while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; do
               STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')  # Obtenir le statut du build
               echo "Build Status: $STATUS"
               sleep 10  # Pause avant de vérifier à nouveau
             done
-            if [ "$STATUS" = "FAILURE" ]; then
+            if [ "$STATUS" = "FAILURE" ]; alors
               echo "Build Failed"
-              exit 1  # Arrête le job si le build échoue
+              exit 1  # Quitter si le build échoue
             fi
 
 workflows:
@@ -63,4 +64,4 @@ workflows:
     jobs:
       - test-python
       - trigger-cloudbuild:
-          requires: [test-python]  # Exécution après le succès des tests
+          requires: [test-python]  # Exécution après le succès des tests unitaires
