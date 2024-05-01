@@ -35,14 +35,14 @@ jobs:
       - run:
           name: Déclencher le Trigger Cloud Build
           command: |
-            TRIGGER_RESULT=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')  # Lancer le trigger
-            sleep 10  # Attendre 10 secondes
+            TRIGGER_RESULT=$(gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8 --format='value(metadata.build_id)')
+            sleep 10
             if [ -z "$TRIGGER_RESULT" ]; alors
               echo "Erreur: Impossible de récupérer le BUILD_ID"
-              exit 1  # Arrête si le BUILD_ID est vide
+              exit 1
             fi
             echo "BUILD_ID: $TRIGGER_RESULT"
-            echo $TRIGGER_RESULT > build_id.txt  # Enregistrer le BUILD_ID pour référence ultérieure
+            echo $TRIGGER_RESULT > build_id.txt
 
       - run:
           name: Surveiller le Build Cloud Build
