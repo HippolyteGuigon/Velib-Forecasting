@@ -17,6 +17,7 @@ default_args = {
 
 dag_velib = DAG(
     "velib_dag_recuperation",
+    is_paused_upon_creation=False,
     default_args=default_args,
     description="DAG pour aller récupérer les données velib",
     schedule_interval=timedelta(minutes=10),
@@ -26,6 +27,7 @@ dag_velib = DAG(
 
 dag_meteo = DAG(
     "meteo_dag_recuperation",
+    is_paused_upon_creation=False,
     default_args=default_args,
     description="DAG pour aller récupérer les données météo",
     schedule_interval=timedelta(minutes=10),
