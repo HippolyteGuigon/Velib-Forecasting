@@ -6,6 +6,10 @@ from velib_forecasting.ETL.extract.velib_extract import get_velib_data
 from velib_forecasting.ETL.load.load_velib import velib_dataframe_to_bigquery
 from velib_forecasting.ETL.transform.transform_velib import transform_velib
 
+from velib_forecasting.ETL.extract.meteo_extract import get_meteo_data
+from velib_forecasting.ETL.load.load_meteo import meteo_dataframe_to_bigquery
+from velib_forecasting.ETL.transform.transform_meteo import transform_meteo
+
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
@@ -54,7 +58,20 @@ def velib_station_info_pipeline() -> None:
 
 
 def meteo_info_pipeline() -> None:
-    pass
+    """
+    The goal of this function is to
+    use Airflow to put the different
+    meteo data inside Bigquery tables
+
+    Arguments:
+        -None
+    Returns:
+        -None
+    """
+
+    meteo_json = get_meteo_data()
+    meteo_json = transform_meteo(meteo_json)
+    meteo_dataframe_to_bigquery()
 
 
 velib_task = PythonOperator(
