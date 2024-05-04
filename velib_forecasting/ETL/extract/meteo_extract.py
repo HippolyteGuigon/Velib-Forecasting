@@ -11,7 +11,7 @@ METEO_API_KEY = main_params["METEO_API_KEY"]
 METEO_ENDPOINT = main_params["METEO_ENDPOINT"]
 
 
-def get_velib_data() -> json:
+def get_meteo_data() -> json:
     """
     The goal of this function is to retrieve
     data from the meteo API and store them in
