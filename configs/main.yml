@@ -1,1 +1,2 @@
-valib_api: !include velib_api.yml
+velib_api: !include velib_api.yml
+meteo_api: !include meteo_api.yml
