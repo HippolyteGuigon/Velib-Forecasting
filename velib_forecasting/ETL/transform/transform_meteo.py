@@ -15,4 +15,4 @@ def transform_meteo(meteo_json: json) -> json:
         json once it is treated
     """
 
-    pass
+    return meteo_json
