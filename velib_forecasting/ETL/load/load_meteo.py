@@ -8,7 +8,7 @@ from google.cloud import bigquery
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "velib-forecasting-auth.json"
 
 
-def velib_dataframe_to_bigquery(
+def meteo_dataframe_to_bigquery(
     meteo_json,
     project_id="velib-forecasting",
     dataset_id="meteo_info",
