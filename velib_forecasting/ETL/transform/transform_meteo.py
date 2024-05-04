@@ -1,7 +1,7 @@
 import json
 
 
-def transform_velib(meteo_json: json) -> json:
+def transform_meteo(meteo_json: json) -> json:
     """
     The goal of this function is to transform
     meteo data once it was retrieved from the
