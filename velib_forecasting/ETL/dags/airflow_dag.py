@@ -71,7 +71,7 @@ def meteo_info_pipeline() -> None:
 
     meteo_json = get_meteo_data()
     meteo_json = transform_meteo(meteo_json)
-    meteo_dataframe_to_bigquery()
+    meteo_dataframe_to_bigquery(meteo_json)
 
 
 velib_task = PythonOperator(
@@ -85,3 +85,6 @@ meteo_task = PythonOperator(
     python_callable=meteo_info_pipeline,
     dag=dag_meteo,
 )
+
+if __name__ == "__main__":
+    meteo_info_pipeline()

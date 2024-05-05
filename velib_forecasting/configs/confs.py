@@ -17,7 +17,7 @@ def load_conf(include=False) -> yaml:
 
     path = Path(os.getcwd())
 
-    path = os.path.join(path.parent.parent.parent, "configs/main.yml")
+    path = os.path.join(path, "configs/main.yml")
 
     if os.getcwd() == "/home/circleci/project":
         path = os.path.join(os.getcwd(), "configs/main.yml")
@@ -28,7 +28,6 @@ def load_conf(include=False) -> yaml:
     if include:
         with open(path, "r") as f:
             file = yaml.load(f, Loader)
-
     else:
         with open(path, "r") as ymlfile:
             file = yaml.safe_load(ymlfile)
