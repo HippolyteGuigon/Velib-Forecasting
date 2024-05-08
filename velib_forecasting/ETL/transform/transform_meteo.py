@@ -26,6 +26,6 @@ def transform_meteo(meteo_json: json) -> json:
     query_job = client.query(query)
 
     last_timestamp = list(query_job.result())[0]["last_timestamp"]
-    meteo_json["velib_matching_timestamp"] = last_timestamp
+    meteo_json["velib_matching_timestamp"] = last_timestamp.isoformat()
 
     return meteo_json
