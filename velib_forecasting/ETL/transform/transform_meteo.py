@@ -21,11 +21,4 @@ def transform_meteo(meteo_json: json) -> json:
         json once it is treated
     """
 
-    table_id = "velib-forecasting.velib_info.hourly_velib_places"
-    query = f"SELECT MAX(time) AS last_timestamp FROM `{table_id}`"
-    query_job = client.query(query)
-
-    last_timestamp = list(query_job.result())[0]["last_timestamp"]
-    meteo_json["velib_matching_timestamp"] = last_timestamp.isoformat()
-
-    return meteo_json
+    pass
