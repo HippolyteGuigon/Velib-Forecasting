@@ -22,4 +22,6 @@ def transform_velib(df_velib: pd.DataFrame) -> pd.DataFrame:
         None
     )
 
+    cleaned_df_velib.drop_duplicates(inplace=True)
+
     return cleaned_df_velib
