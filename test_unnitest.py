@@ -58,6 +58,8 @@ class Test(unittest.TestCase):
             -None
         """
 
+        meteo_info_pipeline()
+
         table_id = "velib-forecasting.meteo_info.meteo_description"
         query = f"SELECT COUNT(*) AS total_rows FROM `{table_id}`"
         query_job = client.query(query)

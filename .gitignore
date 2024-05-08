@@ -3,7 +3,7 @@
 *.ipynb
 .vscode/*
 
-velib_forecasting_dbt/*
+velib_forecasting_dbt/
 
 #Except these files
 
