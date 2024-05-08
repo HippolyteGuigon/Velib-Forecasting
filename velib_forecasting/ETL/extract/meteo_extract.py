@@ -45,7 +45,7 @@ def get_meteo_data() -> json:
     data = response.json()
 
     meteo_json = {
-        "time": last_timestamp,
+        "time": last_timestamp.isoformat(),
         "main_weather": data["weather"][0]["main"],
         "main_weather_description": data["weather"][0]["description"],
         "temperature": data["main"]["temp"],
