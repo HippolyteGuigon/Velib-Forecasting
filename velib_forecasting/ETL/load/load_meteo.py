@@ -21,6 +21,7 @@ class WeatherData(BaseModel):
     wind_speed: float
     wind_degree: int
     clouds: int
+    velib_matching_timestamp: datetime
 
 
 def meteo_dataframe_to_bigquery(
