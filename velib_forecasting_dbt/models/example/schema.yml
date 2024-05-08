@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: unique_hourly_places
+    tests:
+      - not_null:
+          column_name: time_station_code
+      - unique:
+          column_name: time_station_code

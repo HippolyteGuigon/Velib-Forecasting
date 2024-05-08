@@ -1,6 +1,5 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 from velib_forecasting.ETL.extract.velib_extract import get_velib_data
 from velib_forecasting.ETL.load.load_velib import velib_dataframe_to_bigquery
@@ -62,11 +61,3 @@ meteo_task = PythonOperator(
     python_callable=meteo_info_pipeline,
     dag=dag_meteo,
 )
-
-trigger_meteo_task = TriggerDagRunOperator(
-    task_id="declencher_dag_meteo",
-    trigger_dag_id="meteo_dag_recuperation",
-    dag=dag_velib,
-)
-
-velib_task >> trigger_meteo_task
