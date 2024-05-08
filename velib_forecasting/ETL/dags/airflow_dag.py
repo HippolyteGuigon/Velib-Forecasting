@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.dagrun import TriggerDagRunOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 from velib_forecasting.ETL.extract.velib_extract import get_velib_data
 from velib_forecasting.ETL.load.load_velib import velib_dataframe_to_bigquery
