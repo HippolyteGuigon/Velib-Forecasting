@@ -38,7 +38,7 @@ def get_meteo_data() -> json:
     city_name = "Paris"
 
     complete_url = f"{METEO_ENDPOINT}q={city_name}&appid={METEO_API_KEY}&units=\
-        metric&dt={int(last_timestamp)}"
+        metric&dt={int(last_timestamp.timestamp())}"
 
     response = requests.get(complete_url)
 
