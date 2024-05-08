@@ -25,7 +25,7 @@ def transform_meteo(meteo_json: json) -> json:
     query = f"SELECT MAX(time) AS last_timestamp FROM `{table_id}`"
     query_job = client.query(query)
 
-    last_timestamp = list(query_job.result())[0]["total_rows"]
-    meteo_json["velib_matching_timestamp"]=last_timestamp
+    last_timestamp = list(query_job.result())[0]["last_timestamp"]
+    meteo_json["velib_matching_timestamp"] = last_timestamp
 
     return meteo_json
