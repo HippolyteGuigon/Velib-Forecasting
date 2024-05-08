@@ -57,16 +57,11 @@ velib_task = PythonOperator(
     dag=dag_velib,
 )
 
-meteo_task = PythonOperator(
+meteo_task = TriggerDagRunOperator(
     task_id="recuperer_et_inserer_donnees_meteo",
+    trigger_dag_id="meteo_dag_recuperation",
     python_callable=meteo_info_pipeline,
     dag=dag_meteo,
 )
 
-trigger_meteo_task = TriggerDagRunOperator(
-    task_id="declencher_dag_meteo",
-    trigger_dag_id="meteo_dag_recuperation",
-    dag=dag_velib,
-)
-
-velib_task >> trigger_meteo_task
+velib_task >> meteo_task

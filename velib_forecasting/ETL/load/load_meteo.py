@@ -21,7 +21,7 @@ class WeatherData(BaseModel):
     wind_speed: float
     wind_degree: int
     clouds: int
-    velib_matching_timestamp: str
+    velib_matching_timestamp: datetime
 
 
 def meteo_dataframe_to_bigquery(
@@ -67,7 +67,10 @@ def meteo_dataframe_to_bigquery(
             bigquery.SchemaField("velib_matching_timestamp", "TIMESTAMP"),
         ]
 
-        dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}", schema=schema)
+        dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
         client.create_dataset(dataset_ref)
+
+        table_ref = bigquery.Table(full_table_id, schema=schema)
+        client.create_table(table_ref)
 
     client.insert_rows_json(full_table_id, [meteo_json])
