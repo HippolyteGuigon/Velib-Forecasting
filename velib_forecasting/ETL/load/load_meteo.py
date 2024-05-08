@@ -21,7 +21,7 @@ class WeatherData(BaseModel):
     wind_speed: float
     wind_degree: int
     clouds: int
-    velib_matching_timestamp: datetime
+    velib_matching_timestamp: str
 
 
 def meteo_dataframe_to_bigquery(
@@ -51,7 +51,23 @@ def meteo_dataframe_to_bigquery(
     datasets = list(client.list_datasets())  # Liste tous les datasets du projet
     dataset_names = [dataset.dataset_id for dataset in datasets]
     if dataset_id not in dataset_names:
-        dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
+        schema = [
+            bigquery.SchemaField("time", "TIMESTAMP"),
+            bigquery.SchemaField("main_weather", "STRING"),
+            bigquery.SchemaField("main_weather_description", "STRING"),
+            bigquery.SchemaField("temperature", "FLOAT"),
+            bigquery.SchemaField("temp_min", "FLOAT"),
+            bigquery.SchemaField("temp_max", "FLOAT"),
+            bigquery.SchemaField("pressure", "INTEGER"),
+            bigquery.SchemaField("humidity", "INTEGER"),
+            bigquery.SchemaField("visibility", "INTEGER"),
+            bigquery.SchemaField("wind_speed", "FLOAT"),
+            bigquery.SchemaField("wind_degree", "INTEGER"),
+            bigquery.SchemaField("clouds", "INTEGER"),
+            bigquery.SchemaField("velib_matching_timestamp", "TIMESTAMP"),
+        ]
+
+        dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}", schema=schema)
         client.create_dataset(dataset_ref)
 
     client.insert_rows_json(full_table_id, [meteo_json])
