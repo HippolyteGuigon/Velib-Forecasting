@@ -35,7 +35,9 @@ def meteo_dataframe_to_bigquery(
     query = f"SELECT DISTINCT time AS unique_timestamp FROM `{full_table_id}`"
     query_job = client.query(query)
 
-    unique_timestamps = [row["unique_timestamp"] for row in query_job.result()]
+    unique_timestamps = [
+        row["unique_timestamp"].isoformat() for row in query_job.result()
+    ]
 
     datasets = list(client.list_datasets())
     dataset_names = [dataset.dataset_id for dataset in datasets]
@@ -62,5 +64,5 @@ def meteo_dataframe_to_bigquery(
         table_ref = bigquery.Table(full_table_id, schema=schema)
         client.create_table(table_ref)
 
-    if meteo_json["time"] not in unique_timestamps:
+    if str(meteo_json["time"]) not in unique_timestamps:
         client.insert_rows_json(full_table_id, [meteo_json])
