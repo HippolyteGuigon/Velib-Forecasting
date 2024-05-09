@@ -49,8 +49,8 @@ def velib_station_info_pipeline() -> Union[str, None]:
 
     df_velib = get_velib_data()
     df_velib = transform_velib(df_velib)
-    velib_dataframe_to_bigquery(df_velib)
     result_pipeline = velib_dataframe_to_bigquery(df_velib)
+
     if result_pipeline:
         return result_pipeline
 
