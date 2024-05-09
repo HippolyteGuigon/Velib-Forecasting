@@ -66,3 +66,5 @@ def meteo_dataframe_to_bigquery(
 
     if str(meteo_json["time"]) not in unique_timestamps:
         client.insert_rows_json(full_table_id, [meteo_json])
+    else:
+        return "Timestamp already exists"
