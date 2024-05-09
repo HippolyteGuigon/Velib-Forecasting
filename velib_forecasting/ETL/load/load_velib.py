@@ -44,10 +44,22 @@ def velib_dataframe_to_bigquery(
     full_table_id = f"{project_id}.{dataset_id}.{table_id}"
 
     client = bigquery.Client(project=project_id)
-    datasets = list(client.list_datasets())  # Liste tous les datasets du projet
+
+    query = f"SELECT DISTINCT time AS unique_timestamp FROM `{full_table_id}`"
+    query_job = client.query(query)
+
+    unique_timestamps = [
+        row["unique_timestamp"].isoformat() for row in query_job.result()
+    ]
+
+    datasets = list(client.list_datasets())
     dataset_names = [dataset.dataset_id for dataset in datasets]
+
     if dataset_id not in dataset_names:
         dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
         client.create_dataset(dataset_ref)
 
-    to_gbq(dataframe, full_table_id, project_id=project_id, if_exists=if_exists)
+    last_timestamp = dataframe.loc[0, "time"]
+
+    if last_timestamp not in unique_timestamps:
+        to_gbq(dataframe, full_table_id, project_id=project_id, if_exists=if_exists)
