@@ -1,11 +1,10 @@
 import os
-
 from google.cloud import bigquery
 from pydantic import BaseModel
 from datetime import datetime
 
-
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "velib-forecasting-auth.json"
+client = bigquery.Client()
 
 
 class WeatherData(BaseModel):
@@ -29,26 +28,18 @@ def meteo_dataframe_to_bigquery(
     dataset_id="meteo_info",
     table_id="meteo_description",
 ):
-    """
-    The goal of this function is to add the meteo json to the
-    bigquery table
-
-    Arguments:
-        -meteo_json: json: The json with meteo data
-        -project_id: str: The id of the gcp project
-        -dataset_id: str: The id of the gcp project
-        -table_id: str: The id of the bigquery table
-    Returns:
-        -None
-    """
-
     WeatherData(**meteo_json)
 
     full_table_id = f"{project_id}.{dataset_id}.{table_id}"
 
-    client = bigquery.Client(project=project_id)
-    datasets = list(client.list_datasets())  # Liste tous les datasets du projet
+    query = f"SELECT DISTINCT time AS unique_timestamp FROM `{full_table_id}`"
+    query_job = client.query(query)
+
+    unique_timestamps = [row["unique_timestamp"] for row in query_job.result()]
+
+    datasets = list(client.list_datasets())
     dataset_names = [dataset.dataset_id for dataset in datasets]
+
     if dataset_id not in dataset_names:
         schema = [
             bigquery.SchemaField("time", "TIMESTAMP"),
@@ -71,4 +62,5 @@ def meteo_dataframe_to_bigquery(
         table_ref = bigquery.Table(full_table_id, schema=schema)
         client.create_table(table_ref)
 
-    client.insert_rows_json(full_table_id, [meteo_json])
+    if meteo_json["time"] not in unique_timestamps:
+        client.insert_rows_json(full_table_id, [meteo_json])
