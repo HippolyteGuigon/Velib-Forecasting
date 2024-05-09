@@ -43,8 +43,9 @@ class Test(unittest.TestCase):
 
         total_rows_check = list(query_job_check.result())[0]["total_rows"]
 
-        self.assertGreater(total_rows_check, total_rows) or self.assertEqual(
-            "Timestamp already exists", result_insertion
+        self.assertTrue(
+            self.assertGreater(total_rows_check, total_rows)
+            or self.assertEqual("Timestamp already exists", result_insertion)
         )
 
     def test_meteo_info_pipeline(self) -> None:
@@ -73,8 +74,9 @@ class Test(unittest.TestCase):
 
         total_rows_check = list(query_job_check.result())[0]["total_rows"]
 
-        self.assertGreater(total_rows_check, total_rows) or self.assertEqual(
-            "Timestamp already exists", result_insertion
+        self.assertTrue(
+            self.assertGreater(total_rows_check, total_rows)
+            or self.assertEqual("Timestamp already exists", result_insertion)
         )
 
 
