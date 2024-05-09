@@ -1,5 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import datetime, timedelta
 from velib_forecasting.ETL.extract.velib_extract import get_velib_data
 from velib_forecasting.ETL.load.load_velib import velib_dataframe_to_bigquery
@@ -61,3 +62,15 @@ meteo_task = PythonOperator(
     python_callable=meteo_info_pipeline,
     dag=dag_meteo,
 )
+
+wait_dag_velib = ExternalTaskSensor(
+    task_id="attendre_velib_dag",
+    external_dag_id="velib_dag_recuperation",
+    external_task_id="recuperer_et_inserer_donnees_velib",
+    mode="reschedule",
+    dag=dag_meteo,
+    timeout=300,
+    poke_interval=10,
+)
+
+wait_dag_velib >> meteo_task
