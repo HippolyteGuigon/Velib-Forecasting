@@ -43,10 +43,17 @@ class Test(unittest.TestCase):
 
         total_rows_check = list(query_job_check.result())[0]["total_rows"]
 
-        self.assertTrue(
-            self.assertGreater(total_rows_check, total_rows)
-            or self.assertEqual("Timestamp already exists", result_insertion)
+        existing_timestamp_condition = "Timestamp already exists" == result_insertion
+        rows_increased = total_rows_check > total_rows
+
+        print(
+            "total_rows_check",
+            total_rows_check,
+            "total_rows",
+            total_rows,
+            result_insertion,
         )
+        self.assertTrue(rows_increased or existing_timestamp_condition)
 
     def test_meteo_info_pipeline(self) -> None:
         """
@@ -74,10 +81,18 @@ class Test(unittest.TestCase):
 
         total_rows_check = list(query_job_check.result())[0]["total_rows"]
 
-        self.assertTrue(
-            self.assertGreater(total_rows_check, total_rows)
-            or self.assertEqual("Timestamp already exists", result_insertion)
+        existing_timestamp_condition = "Timestamp already exists" == result_insertion
+
+        rows_increased = total_rows_check > total_rows
+
+        print(
+            "total_rows_check",
+            total_rows_check,
+            "total_rows",
+            total_rows,
+            result_insertion,
         )
+        self.assertTrue(rows_increased or existing_timestamp_condition)
 
 
 if __name__ == "__main__":
