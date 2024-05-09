@@ -22,7 +22,7 @@ dag_velib = DAG(
     "velib_dag_recuperation",
     is_paused_upon_creation=False,
     default_args=default_args,
-    description="DAG pour récupérer les données velib",
+    description="DAG pour récupérer les données Velib",
     schedule_interval=timedelta(minutes=10),
     start_date=datetime(2024, 4, 11),
     catchup=False,
@@ -32,7 +32,7 @@ dag_meteo = DAG(
     "meteo_dag_recuperation",
     is_paused_upon_creation=False,
     default_args=default_args,
-    description="DAG pour récupérer les données météo",
+    description="DAG pour récupérer les données Météo",
     schedule_interval=timedelta(minutes=10),
     start_date=datetime(2024, 4, 11),
     catchup=False,
@@ -45,17 +45,18 @@ def velib_station_info_pipeline():
     velib_dataframe_to_bigquery(df_velib)
 
 
-def meteo_info_pipeline():
-    meteo_json = get_meteo_data()
-    meteo_json = transform_meteo(meteo_json)
-    meteo_dataframe_to_bigquery(meteo_json)
-
-
 velib_task = PythonOperator(
     task_id="recuperer_et_inserer_donnees_velib",
     python_callable=velib_station_info_pipeline,
     dag=dag_velib,
 )
+
+
+def meteo_info_pipeline():
+    meteo_json = get_meteo_data()
+    meteo_json = transform_meteo(meteo_json)
+    meteo_dataframe_to_bigquery(meteo_json)
+
 
 meteo_task = PythonOperator(
     task_id="recuperer_et_inserer_donnees_meteo",
@@ -63,14 +64,14 @@ meteo_task = PythonOperator(
     dag=dag_meteo,
 )
 
-wait_dag_velib = ExternalTaskSensor(
+attendre_dag_velib = ExternalTaskSensor(
     task_id="attendre_velib_dag",
     external_dag_id="velib_dag_recuperation",
     external_task_id="recuperer_et_inserer_donnees_velib",
     mode="reschedule",
     dag=dag_meteo,
-    timeout=300,
-    poke_interval=10,
+    timeout=3600,
+    poke_interval=30,
 )
 
-wait_dag_velib >> meteo_task
+attendre_dag_velib >> meteo_task
