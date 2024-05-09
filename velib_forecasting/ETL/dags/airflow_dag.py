@@ -1,7 +1,10 @@
+from typing import Union
+from datetime import datetime, timedelta
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dagrun_operator import TriggerDagRunOperator
-from datetime import datetime, timedelta
+
 from velib_forecasting.ETL.extract.velib_extract import get_velib_data
 from velib_forecasting.ETL.load.load_velib import velib_dataframe_to_bigquery
 from velib_forecasting.ETL.transform.transform_velib import transform_velib
@@ -29,10 +32,13 @@ dag_velib = DAG(
 )
 
 
-def velib_station_info_pipeline():
+def velib_station_info_pipeline() -> Union[str, None]:
     df_velib = get_velib_data()
     df_velib = transform_velib(df_velib)
     velib_dataframe_to_bigquery(df_velib)
+    result_pipeline = velib_dataframe_to_bigquery(df_velib)
+    if result_pipeline:
+        return result_pipeline
 
 
 velib_task = PythonOperator(
@@ -52,10 +58,12 @@ dag_meteo = DAG(
 )
 
 
-def meteo_info_pipeline():
+def meteo_info_pipeline() -> Union[str, None]:
     meteo_json = get_meteo_data()
     meteo_json = transform_meteo(meteo_json)
-    meteo_dataframe_to_bigquery(meteo_json)
+    result_pipeline = meteo_dataframe_to_bigquery(meteo_json)
+    if result_pipeline:
+        return result_pipeline
 
 
 meteo_task = PythonOperator(
