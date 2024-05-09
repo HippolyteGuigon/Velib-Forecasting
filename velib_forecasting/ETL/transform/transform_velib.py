@@ -22,6 +22,6 @@ def transform_velib(df_velib: pd.DataFrame) -> pd.DataFrame:
         None
     )
 
-    cleaned_df_velib.drop_duplicates(inplace=True)
+    cleaned_df_velib.drop_duplicates(inplace=True, subset=["time", "station_code"])
 
     return cleaned_df_velib
