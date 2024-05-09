@@ -33,6 +33,20 @@ dag_velib = DAG(
 
 
 def velib_station_info_pipeline() -> Union[str, None]:
+    """
+    The goal of this function is to
+    ensure the all velib pipeline
+    for the Airflow DAG
+
+    Arguments:
+        -None
+    Returns:
+        -result_pipeline: Union [str, None]:
+        If the velib timestamp is already in
+        the database, returns a string alerting
+        from that
+    """
+
     df_velib = get_velib_data()
     df_velib = transform_velib(df_velib)
     velib_dataframe_to_bigquery(df_velib)
@@ -59,6 +73,20 @@ dag_meteo = DAG(
 
 
 def meteo_info_pipeline() -> Union[str, None]:
+    """
+    The goal of this function is to
+    ensure the all meteo pipeline
+    for the Airflow DAG
+
+    Arguments:
+        -None
+    Returns:
+        -result_pipeline: Union [str, None]:
+        If the meteo timestamp is already in
+        the database, returns a string alerting
+        from that
+    """
+
     meteo_json = get_meteo_data()
     meteo_json = transform_meteo(meteo_json)
     result_pipeline = meteo_dataframe_to_bigquery(meteo_json)
