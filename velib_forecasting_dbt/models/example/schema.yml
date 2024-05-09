@@ -7,3 +7,10 @@ models:
           column_name: time_station_code
       - unique:
           column_name: time_station_code
+
+  - name: meteo_description_dbt
+    tests:
+      - not_null:
+          column_name: time
+      - unique:
+          column_name: time
