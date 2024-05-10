@@ -21,7 +21,6 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > velib-forecasting-auth.json
           gcloud auth activate-service-account --key-file=velib-forecasting-auth.json
           gcloud config set project velib-forecasting
 

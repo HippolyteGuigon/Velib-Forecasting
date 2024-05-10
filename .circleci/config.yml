@@ -71,6 +71,7 @@ jobs:
             if [ "$STATUS" = "FAILURE" ]; then
               echo "Le build a échoué."
               exit 1
+            fi
 
 workflows:
   ci-cd:
