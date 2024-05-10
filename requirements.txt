@@ -1,4 +1,6 @@
 apache-airflow==2.9.0
+dbt==1.0.0.37.12
+dbt-bigquery==1.8.0
 pandas==2.2.2
 pandas_gbq==0.22.0
 pandera==0.18.3
