@@ -19,6 +19,25 @@ jobs:
       - store_test_results:
           path: junit.xml
 
+    run-dbt-tests:
+    docker:
+      - image: cimg/python:3.9
+    environment:
+      CLOUDSDK_CORE_PROJECT: velib-forecasting
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
+    steps:
+      - checkout
+      - run:
+          name: Authentification Google Cloud
+          command: gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+      - run:
+          name: Exécuter les tests DBT
+          command: |
+            cd velib_forecasting_dbt
+            dbt deps
+            dbt run
+            dbt test
+
   trigger-and-get-build-id:
     docker:
       - image: google/cloud-sdk:latest
@@ -64,8 +83,10 @@ workflows:
   ci-cd:
     jobs:
       - test-python
-      - trigger-and-get-build-id:
+      - run-dbt-tests:
           requires: [test-python]
+      - trigger-and-get-build-id:
+          requires: [run-dbt-tests]
           filters:
             branches:
               only: main
