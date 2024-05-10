@@ -1,4 +1,5 @@
 import pandera as pa
+import pandas as pd
 import os
 
 from pandas_gbq import to_gbq
@@ -45,12 +46,14 @@ def velib_dataframe_to_bigquery(
 
     client = bigquery.Client(project=project_id)
 
-    query = f"SELECT DISTINCT time AS unique_timestamp FROM `{full_table_id}`"
+    query = f"SELECT DISTINCT time  AS unique_timestamp, \
+            station_code AS station_code_reference \
+            FROM `{full_table_id}`\
+            WHERE time >= CURRENT_TIMESTAMP() - INTERVAL 12 HOUR"
+
     query_job = client.query(query)
 
-    unique_timestamps = [
-        row["unique_timestamp"].isoformat() for row in query_job.result()
-    ]
+    df_reference = query_job.to_dataframe()
 
     datasets = list(client.list_datasets())
     dataset_names = [dataset.dataset_id for dataset in datasets]
@@ -59,7 +62,23 @@ def velib_dataframe_to_bigquery(
         dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
         client.create_dataset(dataset_ref)
 
-    last_timestamp = dataframe.loc[0, "time"]
+    dataframe_columns = dataframe.columns
+    dataframe["time"] = pd.to_datetime(dataframe["time"], utc=True)
+    merged_dataframe = dataframe.merge(
+        df_reference,
+        left_on=["time", "station_code"],
+        right_on=["unique_timestamp", "station_code_reference"],
+        how="outer",
+    )
 
-    if last_timestamp not in unique_timestamps:
-        to_gbq(dataframe, full_table_id, project_id=project_id, if_exists=if_exists)
+    merged_dataframe = merged_dataframe[
+        merged_dataframe["station_code_reference"].isna()
+    ]
+    merged_dataframe = merged_dataframe[dataframe_columns]
+
+    if merged_dataframe.empty:
+        return "Timestamp already exists"
+    else:
+        to_gbq(
+            merged_dataframe, full_table_id, project_id=project_id, if_exists=if_exists
+        )

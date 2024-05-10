@@ -14,3 +14,9 @@ models:
           column_name: time
       - unique:
           column_name: time
+
+  - name: test_jointure_meteo_velib
+    tests:
+      - not_null:
+          column_name: meteo_time
+          column_name: velib_time

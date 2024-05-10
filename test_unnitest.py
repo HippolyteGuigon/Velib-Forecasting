@@ -46,13 +46,6 @@ class Test(unittest.TestCase):
         existing_timestamp_condition = "Timestamp already exists" == result_insertion
         rows_increased = total_rows_check > total_rows
 
-        print(
-            "total_rows_check",
-            total_rows_check,
-            "total_rows",
-            total_rows,
-            result_insertion,
-        )
         self.assertTrue(rows_increased or existing_timestamp_condition)
 
     def test_meteo_info_pipeline(self) -> None:
@@ -85,13 +78,6 @@ class Test(unittest.TestCase):
 
         rows_increased = total_rows_check > total_rows
 
-        print(
-            "total_rows_check",
-            total_rows_check,
-            "total_rows",
-            total_rows,
-            result_insertion,
-        )
         self.assertTrue(rows_increased or existing_timestamp_condition)
 
 

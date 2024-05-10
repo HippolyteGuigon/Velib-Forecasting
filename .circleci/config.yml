@@ -1,23 +1,43 @@
 version: 2.1
 orbs:
   python: circleci/python@2
+
 jobs:
   test-python:
     docker:
       - image: cimg/python:3.9
     steps:
       - checkout
-
       - run:
           name: Installer les dépendances avec pip
           command: pip install -r requirements.txt
-
       - run:
           name: Exécuter les tests avec pytest
           command: python -m pytest test_unnitest.py --junitxml=junit.xml
-
       - store_test_results:
           path: junit.xml
+
+  run-dbt-tests:
+    docker:
+      - image: google/cloud-sdk:latest
+    environment:
+      CLOUDSDK_CORE_PROJECT: velib-forecasting
+      GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
+    steps:
+      - checkout
+      - run:
+          name: Installer les dépendances DBT
+          command: pip install dbt-bigquery
+      - run:
+          name: Authentification Google Cloud
+          command: gcloud auth activate-service-account --key-file=velib-forecasting-auth.json
+      - run:
+          name: Exécuter les tests DBT
+          command: |
+            cd velib_forecasting_dbt
+            dbt deps
+            dbt run
+            dbt test
 
   trigger-and-get-build-id:
     docker:
@@ -27,45 +47,38 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
     steps:
       - checkout
-
       - run:
           name: Authentification Google Cloud
           command: gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
-
       - run:
           name: Déclencher le Trigger Cloud Build
-          command: |
-            gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8  # Déclenche le trigger
-            sleep 5  # Attendre 5 secondes pour permettre au build de démarrer
-
+          command: gcloud builds triggers run bf9e3d60-bed9-4322-a21a-ea854bd5cba8
       - run:
           name: Obtenir le Build ID le Plus Récent
           command: |
-            BUILD_ID=$(gcloud builds list --sort-by='~createTime' --limit=1 --format='value(id)')  # Obtenir le build_id le plus récent
-            echo "BUILD_ID: $BUILD_ID"
-            echo $BUILD_ID > build_id.txt  # Enregistrer le BUILD_ID
-
+            BUILD_ID=$(gcloud builds list --sort-by='~createTime' --limit=1 --format='value(id)')
+            echo $BUILD_ID > build_id.txt
       - run:
           name: Surveiller le Build Cloud Build
           command: |
-            BUILD_ID=$(cat build_id.txt)  # Lire le BUILD_ID
+            BUILD_ID=$(cat build_id.txt)
             STATUS=""
             while [[ "$STATUS" != "SUCCESS" && "$STATUS" != "FAILURE" ]]; do
-              STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')  # Obtenir le statut du build
+              STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')
               echo "Statut du Build: $STATUS"
-              sleep 10;  # Pause avant de vérifier à nouveau
+              sleep 10
             done
             if [ "$STATUS" = "FAILURE" ]; then
-              echo "Le Build a échoué"
-              exit 1  # Arrêter si le build échoue
-            fi
+              exit 1
 
 workflows:
   ci-cd:
     jobs:
       - test-python
-      - trigger-and-get-build-id:
+      - run-dbt-tests:
           requires: [test-python]
+      - trigger-and-get-build-id:
+          requires: [run-dbt-tests]
           filters:
             branches:
               only: main
