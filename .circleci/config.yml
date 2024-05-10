@@ -19,24 +19,22 @@ jobs:
 
   run-dbt-tests:
     docker:
-      - image: cimg/python:3.9
+      - image: google/cloud-sdk:latest
     environment:
       CLOUDSDK_CORE_PROJECT: velib-forecasting
       GOOGLE_APPLICATION_CREDENTIALS: ./velib-forecasting-auth.json
     steps:
       - checkout
       - run:
-          name: Installer les dépendances DBT
-          command: pip install dbt-bigquery  # ou autre backend DBT
-      - run:
           name: Authentification Google Cloud
-          command: gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+          command: gcloud auth activate-service-account --key-file=velib-forecasting-auth.json
       - run:
           name: Exécuter les tests DBT
           command: |
-            dbt deps  # Assurez-vous d'avoir toutes les dépendances DBT
-            dbt run  # Exécutez les modèles DBT
-            dbt test  # Exécutez les tests DBT
+            cd velib_forecasting_dbt
+            dbt deps
+            dbt run
+            dbt test
 
   trigger-and-get-build-id:
     docker:
