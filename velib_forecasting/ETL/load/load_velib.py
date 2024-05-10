@@ -59,7 +59,9 @@ def velib_dataframe_to_bigquery(
         dataset_ref = bigquery.Dataset(f"{project_id}.{dataset_id}")
         client.create_dataset(dataset_ref)
 
-    last_timestamp = dataframe.loc[0, "time"]
+    dataframe = dataframe[~dataframe["time"].isin(unique_timestamps)]
 
-    if last_timestamp not in unique_timestamps:
+    if dataframe.empty:
+        return "Timestamp already exists"
+    else:
         to_gbq(dataframe, full_table_id, project_id=project_id, if_exists=if_exists)
