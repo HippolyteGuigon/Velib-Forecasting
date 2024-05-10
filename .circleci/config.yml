@@ -26,6 +26,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Installer les dépendances DBT
+          command: pip install dbt-bigquery
+      - run:
           name: Authentification Google Cloud
           command: gcloud auth activate-service-account --key-file=velib-forecasting-auth.json
       - run:
