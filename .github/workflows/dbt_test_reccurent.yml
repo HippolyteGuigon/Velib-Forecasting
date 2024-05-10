@@ -1,0 +1,35 @@
+name: DBT Test Workflow
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Exécution toutes les heures
+  workflow_dispatch:  # Pour un déclenchement manuel
+
+jobs:
+  run_dbt_tests:
+    runs-on: ubuntu-latest  # Exécutez le job sur Ubuntu
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'  # Utilisez la dernière version du Google Cloud SDK
+
+      - name: Authenticate with Google Cloud
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          gcloud auth activate-service-account --key-file=velib-forecasting-auth.json
+          gcloud config set project velib-forecasting
+
+      - name: Install DBT
+        run: pip install dbt-bigquery
+
+      - name: Run DBT Tests
+        run: |
+          cd velib_forecasting_dbt
+          dbt deps  # Installe les dépendances DBT
+          dbt run   # Exécute les opérations DBT
+          dbt test  # Exécute les tests DBT
