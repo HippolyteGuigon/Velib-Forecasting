@@ -69,6 +69,7 @@ jobs:
               sleep 10
             done
             if [ "$STATUS" = "FAILURE" ]; then
+              echo "Le build a échoué."
               exit 1
 
 workflows:
