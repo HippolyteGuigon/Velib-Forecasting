@@ -4,6 +4,7 @@ dbt-bigquery==1.8.0
 pandas==2.2.2
 pandas_gbq==0.22.0
 pandera==0.18.3
+prophet==1.1.5
 protobuf>=3.19.5,<5.0.0
 pytest>=6.0
 PyYAML==6.0.1
