@@ -30,7 +30,27 @@ class Forecasting_model:
     """
 
     def __init__(self) -> None:
-        self.data = get_full_merged_data()
+        pass
+
+    def load_data(self, path=None) -> None:
+        """
+        The goal of this function is to load
+        the full dataset containing both velib
+        and meteo data
+
+        Arguments:
+            -path: If data should be loaded from
+            an external data source, path of this
+            data source
+        Returns:
+            -None
+        """
+
+        if path:
+            self.data = pd.read_csv(path)
+        else:
+            self.data = get_full_merged_data()
+
         self.unique_stations = self.data["station_name"].unique()
 
     def fit_single_station(
