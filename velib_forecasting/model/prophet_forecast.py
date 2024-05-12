@@ -32,7 +32,7 @@ class Forecasting_model:
     def __init__(self) -> None:
         pass
 
-    def load_data(self, path=None) -> None:
+    def load_data(self, path: str = None, data: pd.DataFrame = None) -> None:
         """
         The goal of this function is to load
         the full dataset containing both velib
@@ -48,6 +48,8 @@ class Forecasting_model:
 
         if path:
             self.data = pd.read_csv(path)
+        elif data:
+            self.data = data
         else:
             self.data = get_full_merged_data()
 
