@@ -7,7 +7,7 @@ from prophet import Prophet
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from tqdm import tqdm
-from typing import Union
+from typing import Union, Dict, List
 
 from velib_forecasting.utils import get_full_merged_data
 
@@ -129,18 +129,22 @@ class Forecasting_model:
 
             self.model_dict[station] = [model, total_capacity, rmse]
 
-    def get_average_rmse(self) -> float:
+    def get_average_rmse(self, model_dict: Dict[List] = None) -> float:
         """
         The goal of this function is to
         get the average RMSE for all the
         station once the model was trained
 
         Arguments:
-            -None
+            -model_dict: Dict[List]: Pre-trained
+            model, loaded if provided
         Returns:
             -global_rmse: float: The global
             rmse once the model was trained
         """
+
+        if model_dict:
+            self.model_dict = model_dict
 
         if not hasattr(self, "model_dict"):
             raise AssertionError(
