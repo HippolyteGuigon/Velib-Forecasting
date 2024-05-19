@@ -129,7 +129,7 @@ class Forecasting_model:
 
             self.model_dict[station] = [model, total_capacity, rmse]
 
-    def get_average_rmse(self, model_dict: Dict[List] = None) -> float:
+    def get_average_rmse(self, model_dict: Dict[str, List] = None) -> float:
         """
         The goal of this function is to
         get the average RMSE for all the

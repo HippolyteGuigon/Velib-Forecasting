@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-server
+  template:
+    metadata:
+      labels:
+        app: mlflow-server
+    spec:
+      containers:
+      - name: mlflow-server
+        image: europe-west1-docker.pkg.dev/velib-forecasting/mlflow/velib-forecasting-mlflow-server:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: velib-forecasting-auth.json
+        volumeMounts:
+        - name: gcs-key
+          mountPath: velib-forecasting-auth.json
+          readOnly: true
+      volumes:
+      - name: gcs-key
+        secret:
+          secretName: gcs-key-secret
