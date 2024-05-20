@@ -1,0 +1,14 @@
+# Utiliser une image de base avec Python et Miniconda
+FROM continuumio/miniconda3
+
+# Installer Git et autres dépendances nécessaires
+RUN apt-get update && apt-get install -y git
+
+# Installer MLflow et les dépendances Google Cloud
+RUN pip install mlflow google-cloud-storage
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Définir la commande à exécuter par défaut
+CMD ["mlflow", "server", "--backend-store-uri", "sqlite:///mlflow.db", "--default-artifact-root", "gs://mlflow-velib-tracking-bucket", "--host", "0.0.0.0"]

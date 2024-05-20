@@ -3,6 +3,9 @@
 *.ipynb
 .vscode/*
 
+mlartifacts/
+mlruns/
+
 #Except these files
 
 !requirements.txt
