@@ -7,7 +7,7 @@ from prophet import Prophet
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from tqdm import tqdm
-from typing import Union, Dict, List
+from typing import Union, Dict
 
 from velib_forecasting.utils import get_full_merged_data
 
@@ -127,9 +127,15 @@ class Forecasting_model:
 
             rmse = mean_squared_error(merged_df["y"], merged_df["yhat"], squared=False)
 
-            self.model_dict[station] = [model, total_capacity, rmse]
+            self.model_dict[station] = {
+                "model": model,
+                "total_capacity": total_capacity,
+                "rmse": rmse,
+                "test_df": test_df,
+                "predictions": predictions,
+            }
 
-    def get_average_rmse(self, model_dict: Dict[str, List] = None) -> float:
+    def get_average_rmse(self, model_dict: Dict[str, Dict] = None) -> float:
         """
         The goal of this function is to
         get the average RMSE for all the
@@ -153,7 +159,10 @@ class Forecasting_model:
             )
 
         global_rmse = np.mean(
-            [np.round(v[-1] / v[-2], 2) for _, v in self.model_dict.items()]
+            [
+                np.round(v["rmse"] / v["total_capacity"], 2)
+                for _, v in self.model_dict.items()
+            ]
         )
 
         return global_rmse
