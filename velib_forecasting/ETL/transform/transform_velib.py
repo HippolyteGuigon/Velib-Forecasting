@@ -17,7 +17,7 @@ def transform_velib(df_velib: pd.DataFrame) -> pd.DataFrame:
 
     cleaned_df_velib = df_velib[df_velib["station_status"] == "OUI"]
 
-    cleaned_df_velib = cleaned_df_velib[cleaned_df_velib["station_code"].isdigit()]
+    cleaned_df_velib = cleaned_df_velib[cleaned_df_velib["station_code"].str.isdigit()]
     cleaned_df_velib["station_code"] = cleaned_df_velib["station_code"].astype(int)
     cleaned_df_velib["time"] = pd.to_datetime(cleaned_df_velib["time"]).dt.tz_localize(
         None
