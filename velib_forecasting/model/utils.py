@@ -35,9 +35,4 @@ def plot_forecast(
     plt.ylabel("Valeur")
     plt.title(f"Forecasting predictions for station {station_name}")
 
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-
-    return buf
+    return plt.gcf()
