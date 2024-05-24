@@ -133,9 +133,7 @@ class Forecasting_model:
         """
 
         for station in tqdm(self.unique_stations):
-            print("full_station_training_1")
             model, test_df, total_capacity = self.fit_single_station(station)
-            print("full_station_training_2")
 
             future = test_df[["ds", "temperature"]]
             forecast = model.predict(future)
