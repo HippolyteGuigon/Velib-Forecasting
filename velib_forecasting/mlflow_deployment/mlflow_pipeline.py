@@ -14,7 +14,7 @@ def load_data() -> pd.DataFrame:
     logging.info("Loading data...")
     forecasting_model = Forecasting_model()
     forecasting_model.load_data()
-    logging.info("Data succesfully loaded !")
+    logging.info("Data successfully loaded!")
 
     return forecasting_model
 
@@ -22,7 +22,7 @@ def load_data() -> pd.DataFrame:
 def train_model(model) -> str:
     logging.info("Beginning model training...")
     model.full_station_training()
-    logging.info("Model sucessfully trained")
+    logging.info("Model successfully trained")
 
     return model
 
@@ -37,21 +37,21 @@ with mlflow.start_run(run_name="Velib Pipeline"):
         mlflow.log_param("train_size", model.data.shape[0])
 
     with mlflow.start_run(run_name="Train Model", nested=True):
-        model = train_model(model=model)
-        mlflow.sklearn.log_model(model, "Prophet Forcast model")
+        trained_model = train_model(model=model)
+        mlflow.sklearn.log_model(trained_model, "Prophet Forecast model")
 
     with mlflow.start_run(run_name="Single station evaluation", nested=True):
-        for station_name in model.unique_stations:
+        for station_name in trained_model.unique_stations:
             cleaned_station_name = re.sub(r"[^a-zA-Z0-9_\-\. /]", "_", station_name)
             mlflow.log_metric(
                 f"{cleaned_station_name} station evaluation RMSE",
-                model.model_dict[station_name]["rmse"],
+                trained_model.model_dict[station_name]["rmse"],
             )
-            test_df = model.model_dict[station_name]["test_df"]
-            predictions = model.model_dict[station_name]["predictions"]
+            test_df = trained_model.model_dict[station_name]["test_df"]
+            predictions = trained_model.model_dict[station_name]["predictions"]
             plot = plot_forecast(test_df, predictions, station_name)
             mlflow.log_figure(plot, f"plot_station{station_name}.png")
 
     with mlflow.start_run(run_name="Evaluate Model", nested=True):
-        metrics = evaluate_model(model)
+        metrics = evaluate_model(trained_model)
         mlflow.log_metric("Average RMSE", metrics)
