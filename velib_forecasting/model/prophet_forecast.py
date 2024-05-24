@@ -106,7 +106,7 @@ class Forecasting_model:
         for params in all_params:
             m = Prophet(**params)
             m.add_regressor("temperature")
-            m.fit(df_station)
+            m.fit(train_df)
             df_cv = cross_validation(m, horizon="1 day")
             df_p = performance_metrics(df_cv, rolling_window=1)
             maes.append(df_p["mae"].values[0])
