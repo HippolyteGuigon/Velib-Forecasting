@@ -24,7 +24,7 @@ def get_full_merged_data() -> pd.DataFrame:
     query = "SELECT \
                 * \
               FROM \
-                 `velib-forecasting.velib_info.hourly_velib_places` velib \
+                `velib-forecasting.velib_info.hourly_velib_places` velib \
               INNER JOIN \
                 `velib-forecasting.meteo_info.meteo_description` meteo \
               ON \
