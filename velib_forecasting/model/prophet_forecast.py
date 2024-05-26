@@ -12,7 +12,6 @@ from typing import Union, Dict
 from itertools import product
 
 from velib_forecasting.utils import get_full_merged_data
-from prophet.diagnostics import cross_validation, performance_metrics
 
 logging.getLogger("prophet").setLevel(logging.ERROR)
 logging.getLogger("cmdstanpy").disabled = True
@@ -96,22 +95,30 @@ class Forecasting_model:
             df_station, test_size=test_size, shuffle=False
         )
 
+        sub_train_df, valid_df = train_test_split(
+            train_df, test_size=0.5, shuffle=False
+        )
+
         all_params = [
             dict(zip(grid_search_params.keys(), v))
             for v in product(*grid_search_params.values())
         ]
 
-        maes = []
+        rmse_values = []
 
         for params in all_params:
             m = Prophet(**params)
             m.add_regressor("temperature")
-            m.fit(train_df)
-            df_cv = cross_validation(m, horizon="1 day")
-            df_p = performance_metrics(df_cv, rolling_window=1)
-            maes.append(df_p["mae"].values[0])
+            m.fit(sub_train_df)
+            future = valid_df[["ds", "temperature"]]
+            forecast = m.predict(future)
+            predictions = forecast[["ds", "yhat"]]
+            merged_df = pd.merge(valid_df, predictions, on="ds")
 
-        best_params = all_params[np.argmin(maes)]
+            rmse = mean_squared_error(merged_df["y"], merged_df["yhat"], squared=False)
+            rmse_values.append(rmse)
+
+        best_params = all_params[np.argmin(rmse_values)]
 
         model_tuned = Prophet(**best_params)
         model_tuned.add_regressor("temperature")
