@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velib-forecasting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: velib-forecasting
+  template:
+    metadata:
+      labels:
+        app: velib-forecasting
+    spec:
+      containers:
+      - name: velib-forecasting
+        image: europe-west1-docker.pkg.dev/velib-forecasting/mlflow/velib-forecasting-mlflow-image:latest
+        imagePullPolicy: Always
+        env:
+        - name: MLFLOW_TRACKING_URI
+          value: "http://35.204.218.116:80"

@@ -7,7 +7,7 @@ import logging
 from velib_forecasting.model.prophet_forecast import Forecasting_model
 from velib_forecasting.model.utils import plot_forecast
 
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("http://35.204.218.116:80")
 
 
 def load_data() -> pd.DataFrame:
