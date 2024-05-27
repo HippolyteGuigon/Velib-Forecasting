@@ -2,12 +2,14 @@ import logging
 import pandas as pd
 import numpy as np
 import warnings
+import json
 
 from prophet import Prophet
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from tqdm import tqdm
-from typing import Union, Dict, List
+from typing import Union, Dict
+from itertools import product
 
 from velib_forecasting.utils import get_full_merged_data
 
@@ -15,6 +17,9 @@ logging.getLogger("prophet").setLevel(logging.ERROR)
 logging.getLogger("cmdstanpy").disabled = True
 
 warnings.filterwarnings("ignore")
+
+with open("configs/grid_search.json", "r") as f:
+    grid_search_params = json.load(f)
 
 
 class Forecasting_model:
@@ -30,7 +35,8 @@ class Forecasting_model:
     """
 
     def __init__(self) -> None:
-        pass
+        self.data = None
+        self.model_dict = {}
 
     def load_data(self, path: str = None, data: pd.DataFrame = None) -> None:
         """
@@ -56,7 +62,7 @@ class Forecasting_model:
         self.unique_stations = self.data["station_name"].unique()
 
     def fit_single_station(
-        self, station_name: str, test_size: float = 0.2
+        self, station_name: str, test_size: float = 0.1
     ) -> Union[Prophet, pd.DataFrame, int]:
         """
         The goal of this function is to fit
@@ -76,9 +82,6 @@ class Forecasting_model:
             the velib station
         """
 
-        model = Prophet()
-        model.add_regressor("temperature")
-
         df_station = self.data[self.data["station_name"] == station_name]
         total_capacity = df_station.iloc[0]["total_capacity"]
         df_station.rename({"time": "ds"}, axis=1, inplace=True)
@@ -92,9 +95,37 @@ class Forecasting_model:
             df_station, test_size=test_size, shuffle=False
         )
 
-        model.fit(train_df)
+        sub_train_df, valid_df = train_test_split(
+            train_df, test_size=0.5, shuffle=False
+        )
 
-        return model, test_df, total_capacity
+        all_params = [
+            dict(zip(grid_search_params.keys(), v))
+            for v in product(*grid_search_params.values())
+        ]
+
+        rmse_values = []
+
+        for params in all_params:
+            m = Prophet(**params)
+            m.add_regressor("temperature")
+            m.fit(sub_train_df)
+            future = valid_df[["ds", "temperature"]]
+            forecast = m.predict(future)
+            predictions = forecast[["ds", "yhat"]]
+            merged_df = pd.merge(valid_df, predictions, on="ds")
+
+            rmse = mean_squared_error(merged_df["y"], merged_df["yhat"], squared=False)
+            rmse_values.append(rmse)
+
+        best_params = all_params[np.argmin(rmse_values)]
+
+        model_tuned = Prophet(**best_params)
+        model_tuned.add_regressor("temperature")
+
+        model_tuned.fit(train_df)
+
+        return model_tuned, test_df, total_capacity
 
     def full_station_training(self) -> None:
         """
@@ -107,8 +138,6 @@ class Forecasting_model:
         Returns:
             -None
         """
-
-        self.model_dict = {}
 
         for station in tqdm(self.unique_stations):
             model, test_df, total_capacity = self.fit_single_station(station)
@@ -127,9 +156,15 @@ class Forecasting_model:
 
             rmse = mean_squared_error(merged_df["y"], merged_df["yhat"], squared=False)
 
-            self.model_dict[station] = [model, total_capacity, rmse]
+            self.model_dict[station] = {
+                "model": model,
+                "total_capacity": total_capacity,
+                "rmse": rmse,
+                "test_df": test_df,
+                "predictions": predictions,
+            }
 
-    def get_average_rmse(self, model_dict: Dict[List] = None) -> float:
+    def get_average_rmse(self, model_dict: Dict[str, Dict] = None) -> float:
         """
         The goal of this function is to
         get the average RMSE for all the
@@ -153,7 +188,10 @@ class Forecasting_model:
             )
 
         global_rmse = np.mean(
-            [np.round(v[-1] / v[-2], 2) for _, v in self.model_dict.items()]
+            [
+                np.round(v["rmse"] / v["total_capacity"], 2)
+                for _, v in self.model_dict.items()
+            ]
         )
 
         return global_rmse

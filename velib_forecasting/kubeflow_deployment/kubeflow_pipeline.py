@@ -3,6 +3,7 @@ import pandas as pd
 
 from kfp import dsl, compiler
 from kfp.dsl import component
+import kfp
 
 from velib_forecasting.model.prophet_forecast import Forecasting_model
 
@@ -31,17 +32,16 @@ def train_model_op(data_path: str) -> str:
 
 
 @component
-def evaluate_model_op(model_dict_path: str) -> float:
+def evaluate_model_op(model_dict_path: str) -> str:
     model = Forecasting_model()
     model_dict = pd.read_pickle(model_dict_path)
-
-    return model.get_average_rmse(model_dict=model_dict)
+    return str(model.get_average_rmse(model_dict=model_dict))
 
 
 @dsl.pipeline(
     name="Velib Forecasting Model Training",
-    description="A pipeline that trains and evaluates\
-        a forecasting model for Velib stations.",
+    description="A pipeline that trains and evaluates a \
+        forecasting model for Velib stations.",
 )
 def velib_model_pipeline():
     data_path = load_data_op()
@@ -50,6 +50,21 @@ def velib_model_pipeline():
     return rmse
 
 
+# Compile the pipeline
 compiler.Compiler().compile(
-    pipeline_func=velib_model_pipeline, package_path="velib_model_pipeline.json"
+    pipeline_func=velib_model_pipeline, package_path="velib_model_pipeline.yaml"
 )
+
+# Initialize the KFP client
+client = kfp.Client(
+    host="http://104.197.224.220"
+)  # Remplacez <external-ip> par l'adresse IP externe de votre Kubeflow
+
+# Upload the pipeline to Kubeflow
+client.upload_pipeline(
+    pipeline_package_path="velib_model_pipeline.yaml",
+    pipeline_name="Velib Forecasting Pipeline",
+)
+
+# Optionally, create a run of the pipeline
+client.create_run_from_pipeline_package(pipeline_file="velib_model_pipeline.yaml")

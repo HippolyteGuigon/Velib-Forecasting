@@ -1,0 +1,8 @@
+db-dtypes
+mlflow
+prophet
+scikit-learn
+google-cloud-aiplatform
+pandas
+numpy
+tqdm
