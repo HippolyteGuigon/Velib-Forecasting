@@ -1,0 +1,7 @@
+kfp
+prophet
+scikit-learn
+google-cloud-aiplatform
+pandas
+numpy
+tqdm

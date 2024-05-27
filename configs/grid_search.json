@@ -1,0 +1,4 @@
+{  "changepoint_prior_scale": [0.001, 0.5],
+    "seasonality_prior_scale": [0.01, 1.0, 10],
+    "seasonality_mode": ["additive", "multiplicative"]
+}
